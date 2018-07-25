@@ -1,0 +1,57 @@
+{
+    "n_epochs": 200,
+    "batch_size":32,
+    "learning_rate": 1e-3,
+    "beta1": 0.8,
+    "beta2": 0.999,
+    "weight_decay": 3e-7,
+
+    "word_embed_dim": 300,
+
+    "char_dim": 64,
+    "char_embed_n_filters": 128,
+    "char_embed_kernel_size": 5,
+    "char_embed_pad": 2,
+
+	"highway_n_layers": 2,
+
+    "hidden_size": 128,
+
+    "embed_encoder_resize_kernel_size": 5,
+    "embed_encoder_resize_pad": 3,
+
+    "embed_encoder_n_blocks": 1,
+    "embed_encoder_n_conv": 4,
+    "embed_encoder_kernel_size": 7,
+    "embed_encoder_pad": 3,
+    "embed_encoder_conv_type": "depthwise_separable",
+    "embed_encoder_with_self_attn": false,
+    "embed_encoder_n_heads": 1,
+
+    "model_encoder_n_blocks": 7,
+    "model_encoder_n_conv": 2,
+    "model_encoder_kernel_size": 5,
+    "model_encoder_pad": 2,
+    "model_encoder_conv_type": "depthwise_separable",
+    "model_encoder_with_self_attn": false,
+    "model_encoder_n_heads": 1,
+
+    "data_dir": "../SQuAD/data",
+    "target_dir": "data",
+    "train_file": "train-v1.1.json",
+    "dev_file": "dev-v1.1.json",
+    "test_file": "dev-v1.1.json",
+
+    "train_record_file": "train_record.pkl",
+    "dev_record_file": "dev_record.pkl",
+
+    "glove_dir": "../SQuAD/data/glove",
+    "word_embedding_file": "glove.840B.300d.txt",
+    "glove_word_size": 2200000,
+    "glove_dim": 300,
+
+    "para_limit": 400,
+    "ques_limit": 50,
+    "ans_limit": 30,
+    "char_limit": 16
+}
