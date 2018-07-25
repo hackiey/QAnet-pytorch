@@ -12,20 +12,20 @@ It can get **em: 70.155** and **f1: 79.432** peformance after 22 epochs(2730 bat
 
 ### Usage
 #### Preprocess
-    ```
-    $ mkdir data
-    $ python preprocess.py
-    ```
+```
+$ mkdir data
+$ python preprocess.py
+```
 
 #### Train
-    ```
-    $ mkdir log
-    $ mkdir log/qanet
-    $ python train.py 'some description'
-    ```
+```
+$ mkdir log
+$ mkdir log/qanet
+$ python train.py 'some description'
+```
 
 #### Evaluate
-    First set the log folder and epoch number in evaluate.py then execute the script.
-    ```
-    $ python evaluate.py
-    ```
+First set the log folder and epoch number in evaluate.py then execute the script.
+```
+$ python evaluate.py
+```
