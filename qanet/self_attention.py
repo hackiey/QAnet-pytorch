@@ -44,7 +44,7 @@ class SelfAttention(nn.Module):
             heads[i] = torch.bmm(tmp, V)
 
         # concatenation is the same as reshaping our tensor
-        x = heads.view(batch_size, l, -1)
+        x = heads.permute(1,2,0,3).contiguous().view(batch_size, l, -1)
         x = self.fc_out(x)
 
         return x
