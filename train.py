@@ -27,8 +27,8 @@ criterion = torch.nn.CrossEntropyLoss()
 def loss_function(y_pred, y_true):
     span = y_true[0]
 
-    loss = criterion(y_pred[0], span[:, 0])
-    loss += criterion(y_pred[1], span[:, 1])
+    loss = (criterion(y_pred[0], span[:, 0]) + criterion(y_pred[1], span[:, 1])) / 2
+    # loss += criterion(y_pred[1], span[:, 1])
     return loss
 
 def count_parameters(model):

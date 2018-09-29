@@ -17,7 +17,9 @@ class EncoderBlock(nn.Module):
 
         self.position_encoding = PositionEncoding(n_filters=n_filters)
 
-        self.layer_norm = LayerNorm1d(n_features=n_filters)
+        # self.layer_norm = LayerNorm1d(n_features=n_filters)
+        
+        self.layer_norm = nn.ModuleList([LayerNorm1d(n_features=n_filters) for i in range(n_conv+2)])
 
         self.conv = nn.ModuleList([DepthwiseSeparableConv1d(n_filters,
                                                             kernel_size=kernel_size,
@@ -43,7 +45,7 @@ class EncoderBlock(nn.Module):
         # convolutional layers
         for i in range(self.n_conv):
             residual = outputs
-            outputs = self.layer_norm(outputs)
+            outputs = self.layer_norm[i](outputs)
 
             if i % 2 == 0:
                 outputs = F.dropout(outputs, p=0.1, training=self.training)
@@ -55,7 +57,7 @@ class EncoderBlock(nn.Module):
 
         # self attention
         residual = outputs
-        outputs = self.layer_norm(outputs)
+        outputs = self.layer_norm[-2](outputs)
 
         outputs = F.dropout(outputs, p=0.1, training=self.training)
         outputs = outputs.permute(0, 2, 1)
@@ -67,7 +69,7 @@ class EncoderBlock(nn.Module):
 
         # fully connected layer
         residual = outputs
-        outputs = self.layer_norm(outputs)
+        outputs = self.layer_norm[-1](outputs)
         outputs = F.dropout(outputs, p=0.1, training=self.training)
         outputs = self.fc(outputs)
         outputs = self.layer_dropout(outputs, residual, 0.1 * start_index / total_layers)
