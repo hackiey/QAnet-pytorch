@@ -1,7 +1,8 @@
+import ipdb
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+from torch.nn.parameter import Parameter
 from qanet.highway import Highway
 
 class WordEmbedding(nn.Module):
@@ -76,20 +77,42 @@ class InputEmbedding(nn.Module):
                                                      kernel_size=char_embed_kernel_size,
                                                      padding=char_embed_pad)
 
-        self.projection = nn.Conv1d(word_embed_dim + char_embed_n_filters, hidden_size, 1)
+
+        # ========================== cove start ==============================
+        state_dict = torch.load('data/MT-LSTM.pt')
+
+        self.rnn1 = nn.LSTM(300, 300, num_layers=1, bidirectional=True, batch_first=True)
+        self.rnn2 = nn.LSTM(600, 300, num_layers=1, bidirectional=True, batch_first=True)
+
+        state_dict1 = dict([(name, param.data) if isinstance(param, Parameter) else (name, param)
+                         for name, param in state_dict.items() if '0' in name])
+        state_dict2 = dict([(name.replace('1', '0'), param.data) if isinstance(param, Parameter) else (name.replace('1', '0'),param) for name, param in state_dict.items() if '1' in name])
+        self.rnn1.load_state_dict(state_dict1)
+        self.rnn2.load_state_dict(state_dict2)
+        for p in self.parameters(): p.requires_grad = False
+
+        # ========================== cove end ================================
+
+        self.projection = nn.Conv1d(word_embed_dim + char_embed_n_filters + 600, hidden_size, 1)
 
         self.highway = Highway(input_size=hidden_size, n_layers=highway_n_layers)
 
     def forward(self, context_word, context_char, question_word, question_char):
+        
         context_word, question_word = self.word_embedding(context_word, question_word)
         context_char = self.character_embedding(context_char)
         question_char = self.character_embedding(question_char)
 
         context = torch.cat((context_word, context_char), dim=-1)
         question = torch.cat((question_word, question_char), dim=-1)
-
-        context = self.projection(context.permute(0, 2, 1))
-        question = self.projection(question.permute(0, 2, 1))
+        
+        context_low_cove, _ = self.rnn1(context_word)
+        context_high_cove, _ = self.rnn2(context_low_cove)
+        question_low_cove, _ = self.rnn1(question_word)
+        question_high_cove, _ = self.rnn2(question_low_cove)
+        
+        context = self.projection(torch.cat([context, context_high_cove], dim=-1).permute(0, 2, 1))
+        question = self.projection(torch.cat([question, question_high_cove], dim=-1).permute(0, 2, 1))
 
         context = self.highway(context)
         question = self.highway(question)
