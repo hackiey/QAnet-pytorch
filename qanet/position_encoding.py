@@ -25,7 +25,7 @@ class PositionEncoding(nn.Module):
         l = x.shape[-1]
 
         # computing signal
-        pos = torch.arange(l).repeat(self.d, 1).to(device)
+        pos = torch.arange(l, dtype=torch.float32).repeat(self.d, 1).to(device)
         tmp = pos * self.freqs + self.phases
         pos_enc = torch.sin(tmp)
         x = x + pos_enc

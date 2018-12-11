@@ -5,7 +5,7 @@ This repository is based on [NLPLearn/QANet](https://github.com/NLPLearn/QANet) 
 It can get **em: 70.155** and **f1: 79.432** peformance after 22 epochs(2730 batches per epoch) with EMA.
 
 ### Requirements
-- PyTorch 0.4.0
+- PyTorch >= 0.4.0
 - [torcheras](https://github.com/hackiey/torcheras)
 - spacy
 - tqdm
